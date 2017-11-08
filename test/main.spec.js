@@ -202,11 +202,10 @@ function factory(chai, log, Object, mock_date, loglevelMessagePrefix)
 
       logger.warn(1, 'TEST', true);
 
-      expect(messages.length).to.equal(4);
-      expect(messages[0]).to.equal('[WARN]: ');
-      expect(messages[1]).to.equal(1);
-      expect(messages[2]).to.equal('TEST');
-      expect(messages[3]).to.equal(true);
+      expect(messages.length).to.equal(3);
+      expect(messages[0]).to.equal('[WARN]: 1');
+      expect(messages[1]).to.equal('TEST');
+      expect(messages[2]).to.equal(true);
 
       logger.warn();
 
@@ -241,7 +240,23 @@ function factory(chai, log, Object, mock_date, loglevelMessagePrefix)
 
     });
 
+    it('Should work with printf-like formatting tokens', function () {
+      var messages,
+        logger = log.getLogger('foo');
 
+      loglevelMessagePrefix(logger, {
+        prefixes: ['level']
+      }, function() {
+        return function()
+        {
+          messages = arguments;
+        };
+      });
+
+      logger.warn('%d', 99);
+
+      expect([].slice.call(messages)).to.eql(['[WARN]: %d', 99]);
+    });
   });
 
 }
